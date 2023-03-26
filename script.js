@@ -1,0 +1,50 @@
+let weather = {
+    apiKey : "(OpenWeatherAPi key here)",
+    fetchWeather: function(city) {
+        fetch("https://api.openweathermap.org/data/2.5/weather?q="
+        + city + 
+        "&units=imperial&appid=" + this.apiKey
+        )
+        .then((response) => response.json())
+        .then((data) => this.displayWeather(data))
+    },
+    displayWeather: function(data){
+        const{ name } = data;
+        /*const{icon, description} = data.weather[0];*/
+        const{icon, description} = data.weather[0];
+        const{temp, humidity} = data.main;
+        const{speed} = data.wind;
+        const{ country } = data.sys;
+        console.log(name,icon,description,temp,humidity,speed,country);
+        document.querySelector(".city").innerText = "Weather in " + name +", ";
+        document.querySelector(".country").innerText = country;
+        document.querySelector(".flag").src = "https://flagsapi.com/"+ country +"/shiny/64.png";
+        document.querySelector(".icon").src = "https://openweathermap.org/img/wn/" + icon + ".png";
+        document.querySelector(".description").innerText = description;
+        document.querySelector(".temp").innerText = temp + " °F";
+        document.querySelector(".humidity").innerText =
+          "Humidity: " + humidity + "%";
+        document.querySelector(".wind").innerText =
+          "Wind speed: " + speed + "  mp/h";
+          document.querySelector(".weather").classList.remove("loading");
+          document.body.style.backgroundImage =
+          "url('https://source.unsplash.com/1980x1080/?" + name + " skyline')";
+    },
+    search: function () {
+        this.fetchWeather(document.querySelector(".search-bar").value);
+      },
+};
+
+document.querySelector(".search button").addEventListener("click", function(){
+    weather.search();
+})
+
+document
+  .querySelector(".search-bar")
+  .addEventListener("keyup", function (event) {
+    if (event.key == "Enter") {
+      weather.search();
+    }
+  });
+
+  weather.fetchWeather("Denver");
